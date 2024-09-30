@@ -96,22 +96,81 @@ class Solution {
   public:
     // Function to return a list of integers denoting the node
     // values of both the BST in a sorted order.
-    vector<int> ans;
-    
-    void tree(Node *root){
-        if(root == NULL){
-            return;
+    void helper(vector<int> &res, stack<Node*> &bs){
+        res.push_back(bs.top()->data);
+        Node* top = bs.top();
+        bs.pop();
+        if(!bs.empty() && bs.top()->left)bs.top()->left = nullptr;
+        if(top->right)
+        {
+            bs.push(top->right);
         }
-        ans.push_back(root->data);
-        tree(root->left);
-        tree(root->right);
     }
+    void helper2(int *bs_e, stack<Node*> &bs){
+        if(!bs.top()->left && ! (*bs_e))
+        {
+            *bs_e = bs.top()->data;
+        }
+        else if(!(*bs_e))
+        {
+            bs.push(bs.top()->left);
+        }
+    }
+  public:
+    // Function to return a list of integers denoting the node
+    // values of both the BST in a sorted order.
     vector<int> merge(Node *root1, Node *root2) {
         // Your code here
-        tree(root1);
-        tree(root2);
-        sort(ans.begin(), ans.end());
-        return ans;
+        vector<int> res;
+        stack<Node*> bs1;
+        stack<Node*> bs2;
+        int bs1e = 0, bs2e = 0; 
+        bs1.push(root1);
+        bs2.push(root2);
+        while(!bs1.empty() && !bs2.empty())
+        {
+            helper2(&bs1e,bs1);
+            helper2(&bs2e,bs2);
+            if(bs1e && bs2e)
+            {
+                if(bs1e<bs2e)
+                {
+                    helper(res,bs1);
+                    bs1e = 0;
+                }
+                else
+                {
+                    helper(res,bs2);
+                    bs2e = 0;
+                }
+            }
+        }
+        while(!bs1.empty())
+        {
+            if(!bs1.top()->left)
+            {
+                helper(res,bs1);
+            }
+            else
+            {
+                bs1.push(bs1.top()->left);
+            }
+            
+        }
+        
+        while(!bs2.empty())
+        {
+            if(!bs2.top()->left)
+            {
+                helper(res,bs2);
+            }
+            else
+            {
+                bs2.push(bs2.top()->left);
+            }
+            
+        }
+        return res;
     }
 };
 
