@@ -6,41 +6,30 @@ using namespace std;
 
 
 // } Driver Code Ends
-// User function Template for C++
 
 class Solution {
   public:
     int maxLength(string& s) {
         // code here
-        stack<string> st; int res = 0;
-        for ( int i = 0; i<s.size(); i++ ){
-            if ( s[i] == ')' ){
-                int vals = 0;
-                while ( st.size() > 0 && st.top() != ")" && st.top() != "(" ){
-                    vals += stoi(st.top());
-                    st.pop();
-                }
-                if ( st.size() > 0 && st.top() != ")" ){
-                    st.pop();
-                    st.push(to_string(vals+2));
-                } else {
-                    if ( vals > 0 ) st.push(to_string(vals));
-                    string temp = "";
-                    temp += s[i];
-                    st.push(temp);
-                }
+          stack<int> st;
+    st.push(-1); 
+    int maxLen = 0;
+    
+    for (int i = 0; i < s.length(); i++) {
+        if (s[i] == '(') {
+            st.push(i);
+        } else {
+            st.pop(); 
+            
+            if (!st.empty()) {
+                maxLen = max(maxLen, i - st.top());
             } else {
-                string temp = "";
-                temp += s[i];
-                st.push(temp);
+                st.push(i);
             }
-        } int val = 0;
-        while ( !st.empty() ){
-            if ( st.top() == ")" || st.top() == "(" ) val = 0;
-            else val += stoi(st.top());
-            st.pop();
-            res = max(res, val);
-        } return res;
+        }
+    }
+    
+    return maxLen;
     }
 };
 
@@ -55,6 +44,9 @@ int main() {
 
         Solution ob;
         cout << ob.maxLength(S) << "\n";
+
+        cout << "~"
+             << "\n";
     }
     return 0;
 }
