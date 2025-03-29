@@ -1,93 +1,72 @@
 //{ Driver Code Starts
-// Program to find the maximum profit job sequence from a given array 
-// of jobs with deadlines and profits 
-#include<bits/stdc++.h>
-using namespace std; 
-
-// A structure to represent a job 
-struct Job 
-{ 
-    int id;	 // Job Id 
-    int dead; // Deadline of job 
-    int profit; // Profit if job is over before or on deadline 
-}; 
+// Driver code
+#include <bits/stdc++.h>
+using namespace std;
 
 
 // } Driver Code Ends
-/*
-struct Job 
-{ 
-    int id;	 // Job Id 
-    int dead; // Deadline of job 
-    int profit; // Profit if job is over before or on deadline 
-};
-*/
 
-class Solution 
-{
-    public:
-    static bool comp(Job a, Job b){
-        return a.profit > b.profit;
-    }
-
-    vector<int> JobScheduling(Job arr[], int n) 
-    { 
-        // your code here
-        sort(arr, arr+n, comp);
-        bool done[n] = {0};
+class Solution {
+  public:
+    vector<int> jobSequencing(vector<int> &deadline, vector<int> &profit) {
+        // code here
+        vector<pair<int,int>> v;
+        int n = deadline.size();
+        int maxProfit = 0 , maxJobs = 0;
+        for(int i = 0 ; i < n ; i ++)
+            v.push_back({profit[i],deadline[i]});
+        sort(v.begin(),v.end(),[](pair<int,int> &a, pair<int,int> &b){
+            return a.first > b.first;
+        });
+        vector<int> hashArray(*max_element(deadline.begin(),deadline.end()) + 1,-1);
         
-        int day = 0, profit = 0;
-        
-        for(int i=0; i<n; i++){
-            
-            for(int j = min(n,arr[i].dead-1); j>=0;j--){
-                
-                if(done[j] == false){
-                    
-                    day+=1;
-                    profit += arr[i].profit;
-                    done[j] = true;
-                    
-                    done[j] = true;
+        for(int i = 0 ; i < n ; i++){
+            int k = v[i].second;
+            while(true){
+                if(hashArray[k] == -1){
+                    hashArray[k] = i;
+                    maxProfit += v[i].first;
+                    maxJobs++;
                     break;
+                } else {
+                    k--;
+                    if(k == 0)
+                        break;
                 }
             }
         }
-        return {day,profit};
-    } 
+        
+        return {maxJobs,maxProfit};
+    }
 };
 
+
 //{ Driver Code Starts.
-// Driver program to test methods 
-int main() 
-{ 
+
+int main() {
     int t;
-    //testcases
     cin >> t;
-    
-    while(t--){
-        int n;
-        
-        //size of array
-        cin >> n;
-        Job arr[n];
-        
-        //adding id, deadline, profit
-        for(int i = 0;i<n;i++){
-                int x, y, z;
-                cin >> x >> y >> z;
-                arr[i].id = x;
-                arr[i].dead = y;
-                arr[i].profit = z;
-        }
-        Solution ob;
-        //function call
-        vector<int> ans = ob.JobScheduling(arr, n);
-        cout<<ans[0]<<" "<<ans[1]<<endl;
+    cin.ignore();
+    while (t--) {
+        vector<int> deadlines, profits;
+        string temp;
+        getline(cin, temp);
+        int x;
+        istringstream ss1(temp);
+        while (ss1 >> x)
+            deadlines.push_back(x);
+
+        getline(cin, temp);
+        istringstream ss2(temp);
+        while (ss2 >> x)
+            profits.push_back(x);
+
+        Solution obj;
+        vector<int> ans = obj.jobSequencing(deadlines, profits);
+        cout << ans[0] << " " << ans[1] << endl;
+        cout << "~" << endl;
     }
-	return 0; 
+    return 0;
 }
-
-
 
 // } Driver Code Ends
